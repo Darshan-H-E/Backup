@@ -1,0 +1,29 @@
+"query:Linux Reddit:tags # \"content\" or title =~ \"\\[OC\\]\"" meta
+
+https://news.ycombinator.com/rss news
+http://rss.art19.com/the-daily
+https://www.technologyreview.com/topnews.rss
+http://feeds.feedburner.com/IeeeSpectrumFullText
+https://hackernoon.com/feed
+https://feeds.feedburner.com/TechCrunch/
+https://www.reddit.com/r/scholarships/new.rss reddit content
+https://www.reddit.com/r/Python/new.rss reddit content
+http://rss.sciam.com/ScientificAmerican-Global
+http://www.space.com/feeds/all
+https://www.reddit.com/r/programming/new.rss reddit content
+https://www.reddit.com/r/web_design/new.rss reddit content
+https://www.reddit.com/r/webdev/new.rss reddit content
+https://www.reddit.com/r/coding/new.rss reddit content
+https://www.reddit.com/r/FlutterDev/new.rss reddit content
+https://www.reddit.com/r/typescript/new.rss reddit content
+https://www.reddit.com/r/reactjs/new.rss reddit content
+https://www.reddit.com/r/javascript/new.rss reddit content
+https://www.reddit.com/r/ApplyingToCollege/new.rss reddit content
+https://www.reddit.com/r/opensource/new.rss reddit content
+https://www.reddit.com/r/cybersecurity/new.rss reddit content
+https://www.reddit.com/r/cpp/new.rss reddit content
+https://www.reddit.com/r/computervision/new.rss reddit content
+https://www.reddit.com/r/MachineLearning/new.rss reddit content
+https://www.reddit.com/r/Hacking_Tutorials/new.rss reddit content
+https://www.reddit.com/r/hacking/new.rss reddit content
+http://arxiv.org/rss/cs.CV
