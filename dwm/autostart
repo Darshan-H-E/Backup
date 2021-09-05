@@ -1,0 +1,19 @@
+#!/bin/sh
+
+xrdb merge ~/.Xresources &
+xmodmap ~/.Xmodmap
+
+xset s off
+xset -dpms
+xset s noblank
+xset r rate 200 30
+
+picom -f & 
+nitrogen --restore &
+
+while xsetroot -name "`date '+%d/%m %a %H:%M'` | `acpi -b | sed 's/.*[charging|unknown], \([0-9]*\)%.*/\1/gi'`%"
+do
+	sleep 1m
+done &
+
+dwm
