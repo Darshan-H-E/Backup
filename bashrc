@@ -1,3 +1,7 @@
+#
+# ~/.bashrc
+#
+
 set -o vi
 bind '"jk":vi-movement-mode'
 bind '"\C-l":clear-screen'
@@ -8,72 +12,49 @@ alias ls='ls --color=auto'
 #ping www.google.com
 alias pg='ping -c1 www.google.com'
 
-# fzf
-source /usr/share/fzf/key-bindings.bash
-
-alias up='sudo pacman -Syyu'
-
-PS1="\[\033[32m\]  \[\033[37m\]\[\033[34m\]\W \[\033[0m\]"
+#PS1="\[\033[32m\]  \[\033[37m\]\[\033[34m\]\W \[\033[0m\]"
+PS1="\[\033[32m\]▶ \[\033[37m\]\[\033[34m\]\W \[\033[0m\]"
 
 # bash history unlimited 
 HISTSIZE= 
 HISTFILESIZE=
 
-# yay
-alias yp="yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk \"{print \$2}\")' | xargs -ro  yay -S"
-
-#logo-ls
-alias la='logo-ls -A'
-alias ll='logo-ls -al'
-
 alias v='vim'
 alias nn='nvim'
-alias lv='lvim'
+alias lv='~/.local/bin/lvim'
 alias rn='ranger'
-
-#mpd
-alias kek=" killall mpd ncmpcpp ncmpcpp_cover_art.sh"
-alias mpd=" mpd && ~/.ncmpcpp/ncmpcpp-ueberzug/ncmpcpp-ueberzug"
-alias np="~/.ncmpcpp/ncmpcpp-ueberzug/ncmpcpp-ueberzug"
-
-# mpv
-alias au='mpv --no-video'
-# youtube-dl to download stuffs
-alias yt='youtube-dl --extract-audio --add-metadata --xattrs --embed-thumbnail --audio-quality 0 --audio-format mp3'
-alias ytv='youtube-dl --merge-output-format mp4 -f "bestvideo+bestaudio[ext=m4a]/best" --embed-thumbnail --add-metadata'
-
-alias die='systemctl poweroff'
-alias pm='pulsemixer'
-alias cb='pipes.sh'
-alias gg='supergfxctl -g'
-alias com='supergfxctl -m compute'
-
-#CPU
-alias perf="sudo cpupower -c all frequency-set -g performance"
-alias pow="sudo cpupower -c all frequency-set -g powersave"
-alias nor="sudo cpupower -c all frequency-set -g schedutil"
-
-b (){
-  xrandr --output eDP --brightness 0."$1"
-}
-
-# less color support
-export LESS_TERMCAP_mb=$'\e[1;32m'
-export LESS_TERMCAP_md=$'\e[1;32m'
-export LESS_TERMCAP_me=$'\e[0m'
-export LESS_TERMCAP_se=$'\e[0m'
-export LESS_TERMCAP_so=$'\e[01;33m'
-export LESS_TERMCAP_ue=$'\e[0m'
-export LESS_TERMCAP_us=$'\e[1;4;31m'
+alias gst='git status'
+alias lg='lazygit'
+alias lad='lazydocker'
 
 # source venv
 alias va='source ./venv/bin/activate'
 alias iv='python ../virtualenv.pyz venv'
+alias cod='conda deactivate'
+alias so='source ~/.bashrc'
+alias up='sudo pacman -Syu'
+alias die='shutdown now'
+alias logout='pkill dwm'
 
-ch (){
-  curl cht.sh/"$1"/"$2"
+# xorg brightness
+alias cb="xrandr --verbose | grep -i brightness | head -n1 | awk '{print $2}'"
+sb() {
+    xrandr --output DP-0 --brightness "$1"
 }
 
 # fnm
-export PATH=/home/volt/.fnm:$PATH
-eval "`fnm env`"
+FNM_PATH="/home/d14/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "`fnm env`"
+fi
+
+[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
+export PATH=$PATH:$(go env GOPATH)/bin
+
+#zoxide
+eval "$(zoxide init bash)"
+
+# dotnet
+export DOTNET_ROOT=$HOME/apps/dotnet
+export PATH=$DOTNET_ROOT:$PATH

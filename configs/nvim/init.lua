@@ -1,58 +1,37 @@
--- load all plugins
-require "pluginList"
-require "misc-utils"
+vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
+vim.g.mapleader = " "
 
-require "top-bufferline"
-require "statusline"
+-- bootstrap lazy and all plugins
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
-require("colorizer").setup()
+if not vim.uv.fs_stat(lazypath) then
+  local repo = "https://github.com/folke/lazy.nvim.git"
+  vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
+end
 
--- lsp stuff
-require "nvim-lspconfig"
-require "compe-completion"
+vim.opt.rtp:prepend(lazypath)
 
-local cmd = vim.cmd
-local g = vim.g
+local lazy_config = require "configs.lazy"
 
-g.mapleader = " "
-g.auto_save = 0
+-- load plugins
+require("lazy").setup({
+  {
+    "NvChad/NvChad",
+    lazy = false,
+    branch = "v2.5",
+    import = "nvchad.plugins",
+  },
 
--- colorscheme related stuff
-cmd "syntax on"
+  { import = "plugins" },
+}, lazy_config)
 
-local base16 = require "base16"
-base16(base16.themes("onedark"), true)
+-- load theme
+dofile(vim.g.base46_cache .. "defaults")
+dofile(vim.g.base46_cache .. "statusline")
 
-require "highlights"
+require "options"
+require "nvchad.autocmds"
 
--- blankline
-
---g.indentLine_enabled = 1
--- g.indent_blankline_char = "▏"
-
--- g.indent_blankline_filetype_exclude = {"help", "terminal", "dashboard"}
--- g.indent_blankline_buftype_exclude = {"terminal"}
-
--- g.indent_blankline_show_trailing_blankline_indent = false
--- g.indent_blankline_show_first_indent_level = false
-
-require "treesitter-nvim"
-require "mappings"
-
-require "telescope-nvim"
-require "nvimTree" -- file tree stuff
-require "file-icons"
-
--- git signs , lsp symbols etc
-require "gitsigns-nvim"
-require("nvim-autopairs").setup()
-require("lspkind").init()
-
--- hide line numbers in terminal windows
-vim.api.nvim_exec([[
-   au BufEnter term://* setlocal nonumber
-]], false)
-
--- require "zenmode"
-require "whichkey"
-require "dashboard"
+vim.schedule(function()
+  require "mappings"
+end)

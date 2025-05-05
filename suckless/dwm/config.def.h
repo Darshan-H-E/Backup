@@ -7,8 +7,8 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 0;        /* 0 means bottom bar */
-static const char *fonts[]          = { "JetBrainsMono Nerd Font:size=12","JoyPixels:pixelsize=10:antialias=true:autohint=true" };
-static const char dmenufont[]       = { "JetBrainsMono Nerd Font:size=16" };
+static const char *fonts[]          = { "Hack Nerd Font:size=12","JoyPixels:pixelsize=10:antialias=true:autohint=true" };
+static const char dmenufont[]       = { "Hack Nerd Font:size=16" };
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
@@ -63,34 +63,34 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_bluez, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *alacritty[]  = { "alacritty", NULL };
-static const char *light_up[] = {"/usr/bin/brightnessctl", "set", "5%+", NULL};
-static const char *light_down[] = {"/usr/bin/brightnessctl", "set", "5%-", NULL};
-static const char *mpc_next[] = {"/usr/bin/mpc", "next", NULL};
-static const char *mpc_prev[] = {"/usr/bin/mpc", "prev", NULL};
-static const char *mpc_toggle[] = {"/usr/bin/mpc", "toggle", NULL};
+static const char *light_up[] = {"/home/d14/.local/bin/inc-brightness.sh", NULL};
+static const char *light_down[] = {"/home/d14/.local/bin/dec-brightness.sh", NULL};
 static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
 static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
 static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
+static const char *playpausecmd[] = { "playerctl", "play-pause", NULL };
+static const char *nextcmd[]      = { "playerctl", "next", NULL };
+static const char *prevcmd[]      = { "playerctl", "previous", NULL };
 
 #include "shiftview.c"
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-    { 0,				            XK_F8,     spawn,	       {.v = light_up } },
-	{ 0,			                XK_F7,     spawn,          {.v = light_down } },
-	{ 0,			                XK_F9,     spawn,          {.v = mpc_toggle} },
-    { 0,				            XK_F10,    spawn,	       {.v = mpc_next } },
-	{ MODKEY,				        XK_F10,    spawn,          {.v = mpc_prev } },
+  { 0,				   XF86XK_MonBrightnessUp,     spawn,	       {.v = light_up } },
+	{ 0,			     XF86XK_MonBrightnessDown,   spawn,        {.v = light_down } },
+  { 0,           XF86XK_AudioPlay,           spawn,        {.v = playpausecmd } },
+  { 0,           XF86XK_AudioNext,           spawn,        {.v = nextcmd } },
+  { 0,           XF86XK_AudioPrev,           spawn,        {.v = prevcmd } },
 	{ 0,           XF86XK_AudioLowerVolume,    spawn,	       {.v = downvol } },
-	{ 0,                  XF86XK_AudioMute,    spawn,	       {.v = mutevol } },
+	{ 0,           XF86XK_AudioMute,           spawn,	       {.v = mutevol } },
 	{ 0,           XF86XK_AudioRaiseVolume,    spawn,	       {.v = upvol   } },
 	{ MODKEY,               XK_bracketleft,    shiftview,      {.i = -1 } },
 	{ MODKEY,               XK_bracketright,   shiftview,      {.i = +1 } },
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_a,      spawn,          {.v = alacritty } },
-    { MODKEY,			            XK_o,      spawn,		   SHCMD("emoji") },
-    { MODKEY,			            XK_p,      spawn,		   SHCMD("flameshot gui") },
-    { MODKEY|ShiftMask,			    XK_p,      spawn,		   SHCMD("flameshot full -p ~/pics/screenshots") },
+  { MODKEY,			                  XK_o,      spawn,		       SHCMD("emoji") },
+  { MODKEY,			                  XK_p,      spawn,		       SHCMD("flameshot gui") },
+  { MODKEY|ShiftMask,			        XK_p,      spawn,		       SHCMD("flameshot full -p ~/pics/screenshots") },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
