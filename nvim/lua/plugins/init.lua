@@ -12,10 +12,37 @@ return {
       require "configs.lspconfig"
     end,
   },
+  -- diffview
+  {
+     "sindrets/diffview.nvim",
+     dependencies = {
+       { "nvim-tree/nvim-web-devicons", lazy = true },
+     },
+  },
 
+  -- dadbod
+  {
+    'kristijanhusak/vim-dadbod-ui',
+    dependencies = {
+      { 'tpope/vim-dadbod', lazy = true },
+      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true }, -- Optional
+    },
+    cmd = {
+      'DBUI',
+      'DBUIToggle',
+      'DBUIAddConnection',
+      'DBUIFindBuffer',
+    },
+    init = function()
+      -- Your DBUI configuration
+      vim.g.db_ui_use_nerd_fonts = 1
+      vim.g.db_ui_save_location = "~/.config/nvim/db_ui"
+    end,
+  },
+  -- trouble
   {
     "folke/trouble.nvim",
-    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    opts = {},
     cmd = "Trouble",
   },
 

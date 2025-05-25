@@ -36,3 +36,13 @@ map("n", "<Space>ts", ":Trouble symbols toggle<cr>", { desc = "Trouble symbols"}
 map("n", "<Space>tq", ":Trouble qflist toggle<cr>", { desc = "Trouble quickfix"})
 map("n", "<Space>tl", ":Trouble lsp toggle<cr>", { desc = "Trouble lsp"})
 map("n", "<Space>tf", ":Trouble loclist toggle<cr>", { desc = "Trouble loclist"})
+
+-- Git signs
+map("n", "<Space>gb", ":Gitsigns blame<cr>", { desc = "Blame"})
+map("n", "<Space>gd", ":Gitsigns toggle_deleted<cr>", { desc = "Deleted"})
+map("n", "<Space>gp", ":Gitsigns preview_hunk_inline<cr>", { desc = "Preview"})
+
+-- DBUI
+map("n", "<Space>do", ":DBUIToggle<cr>", { desc = "DBUI"})
+
+
