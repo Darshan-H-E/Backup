@@ -12,26 +12,36 @@ return {
       require "configs.lspconfig"
     end,
   },
+
+  {
+    "nvim-pack/nvim-spectre",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
+  {
+    "bullets-vim/bullets.vim",
+    lazy = true,
+    ft = { "markdown", "text" },
+  },
   -- diffview
   {
-     "sindrets/diffview.nvim",
-     dependencies = {
-       { "nvim-tree/nvim-web-devicons", lazy = true },
-     },
+    "sindrets/diffview.nvim",
+    dependencies = {
+      { "nvim-tree/nvim-web-devicons", lazy = true },
+    },
   },
 
   -- dadbod
   {
-    'kristijanhusak/vim-dadbod-ui',
+    "kristijanhusak/vim-dadbod-ui",
     dependencies = {
-      { 'tpope/vim-dadbod', lazy = true },
-      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true }, -- Optional
+      { "tpope/vim-dadbod", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
     },
     cmd = {
-      'DBUI',
-      'DBUIToggle',
-      'DBUIAddConnection',
-      'DBUIFindBuffer',
+      "DBUI",
+      "DBUIToggle",
+      "DBUIAddConnection",
+      "DBUIFindBuffer",
     },
     init = function()
       -- Your DBUI configuration
@@ -102,14 +112,19 @@ return {
       },
       {
         -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
+        "MeanderingProgrammer/render-markdown.nvim",
         opts = {
           file_types = { "markdown", "Avante" },
+          heading = {
+            -- border = true,
+            -- position = 'inline',
+            -- icons = { '🌱 ', '📌 ', '🧩 ', '💡 ', '📦 ', '🎯 ',}
+          },
         },
         ft = { "markdown", "Avante" },
       },
     },
-  }
+  },
 
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },

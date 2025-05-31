@@ -22,3 +22,4 @@ vim.g.completion_chain_complete_list = {
     { complete_items = { 'vim-dadbod-completion' } },
   },
 }
+
