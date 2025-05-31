@@ -20,11 +20,18 @@ end, { desc = "terminal toggle floating term" })
 
 map("n", "<Space>q", ":%bd|e#<cr>", { desc = "Close all buffers except current" })
 map("n", "<C-q>", ":qa!<cr>", { desc = "quit nvchad" })
+map("n", "<Space>;", ":q!<cr>", { desc = "force quit buffer" })
 map("n", "<Space>tk", ":Telescope keymaps<cr>", { desc = "Telescope keymaps" })
 map("n", "H", ":bp<cr>", { desc = "previous buffer" })
 map("n", "L", ":bn<cr>", { desc = "next buffer" })
-map("n", "-", "10<C-w><<cr>", { desc = "desc width" })
-map("n", "=", "10<C-w>><cr>", { desc = "desc width" })
+map("n", "-", "10<C-w><<cr>", { desc = "dec width" })
+map("n", "=", "10<C-w>><cr>", { desc = "inc width" })
+map("n", "_", "10<C-w>-<cr>", { desc = "dec height" })
+map("n", "+", "10<C-w>+<cr>", { desc = "inc height" })
+
+map("n", "E", function()
+  vim.diagnostic.open_float(nil, { focusable = false })
+end, { desc = "Show diagnostics under cursor" })
 
 -- Trouble
 map("n", "<Space>td", ":Trouble diagnostics toggle<cr>", { desc = "Trouble diagnostics" })
@@ -42,14 +49,14 @@ map("n", "<Space>gp", ":Gitsigns preview_hunk_inline<cr>", { desc = "Preview" })
 map("n", "<Space>do", ":DBUIToggle<cr>", { desc = "DBUI" })
 
 -- Spectre
-map({ "n" }, "<leader>sr", function()
+map("n", "<leader>sr", function()
   require("spectre").toggle()
 end, { desc = "Toggle spectre" })
 
-map({ "n" }, "<leader>sw", function()
+map("n", "<leader>sw", function()
   require("spectre").open_visual { select_word = true }
 end, { desc = "Search current word" })
 
-map({ "n" }, "<leader>sf", function()
+map("n", "<leader>sf", function()
   require("spectre").open_file_search()
 end, { desc = "Search in current file" })
