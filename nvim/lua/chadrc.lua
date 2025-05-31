@@ -9,14 +9,14 @@ M.base46 = {
   changed_themes = {
     nord = {
       -- base_16 = {
-      --   base0A = "#83c092",
+      --   base0A = "#A3BE8C",
       --   base0B = "#7b9b98",
       --   base0D = "#e67e80",
       -- },
       base_16 = {
-        base0A = "#A3BE8C",
+        base0A = "#BF616A",
         base0B = "#7b9b98",
-        base0D = "#BF616A",
+        base0D = "#83c092",
       },
     },
   },
