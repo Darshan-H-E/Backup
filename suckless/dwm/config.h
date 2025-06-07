@@ -16,10 +16,18 @@ static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#005577";
 static const char col_bluez[]       = "#15539E";
 static const char col_green[]       = "#50F97B";
+static const unsigned int baralpha  = 0xd0;
+static const unsigned int borderalpha = OPAQUE;
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_green, col_gray1, col_bluez },
+};
+
+static const unsigned int alphas[][3]      = {
+	/*               fg      bg        border     */
+	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
+	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
 };
 
 /* tagging */
@@ -71,57 +79,61 @@ static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "togg
 static const char *playpausecmd[] = { "playerctl", "play-pause", NULL };
 static const char *nextcmd[]      = { "playerctl", "next", NULL };
 static const char *prevcmd[]      = { "playerctl", "previous", NULL };
+static void incOp(const Arg *arg);
+static void decOp(const Arg *arg);
 
 #include "shiftview.c"
 static Key keys[] = {
-	/* modifier                     key        function        argument */
-  { 0,				   XF86XK_MonBrightnessUp,     spawn,	       {.v = light_up } },
-	{ 0,			     XF86XK_MonBrightnessDown,   spawn,        {.v = light_down } },
-  { 0,           XF86XK_AudioPlay,           spawn,        {.v = playpausecmd } },
-  { 0,           XF86XK_AudioNext,           spawn,        {.v = nextcmd } },
-  { 0,           XF86XK_AudioPrev,           spawn,        {.v = prevcmd } },
-	{ 0,           XF86XK_AudioLowerVolume,    spawn,	       {.v = downvol } },
-	{ 0,           XF86XK_AudioMute,           spawn,	       {.v = mutevol } },
-	{ 0,           XF86XK_AudioRaiseVolume,    spawn,	       {.v = upvol   } },
-	{ MODKEY,               XK_bracketleft,    shiftview,      {.i = -1 } },
-	{ MODKEY,               XK_bracketright,   shiftview,      {.i = +1 } },
-	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_a,      spawn,          {.v = alacritty } },
-  { MODKEY,			                  XK_o,      spawn,		       SHCMD("emoji") },
-  { MODKEY,			                  XK_p,      spawn,		       SHCMD("flameshot gui") },
-  { MODKEY|ShiftMask,			        XK_p,      spawn,		       SHCMD("flameshot full -p ~/pics/screenshots") },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_c,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                   XK_semicolon,  zoom,           {0} },
-	{ MODKEY,                       XK_e,      view,           {0} },
-	{ MODKEY,                       XK_q,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	/* modifier                     key                        function        argument */
+  { MODKEY,                       XK_o,                      incOp,          {.f = 0.1} },
+  { MODKEY,                       XK_i,                      decOp,          {.f = 0.1} },
+  { 0,				                    XF86XK_MonBrightnessUp,    spawn,	         {.v = light_up } },
+	{ 0,			                      XF86XK_MonBrightnessDown,  spawn,          {.v = light_down } },
+  { 0,                            XF86XK_AudioPlay,          spawn,          {.v = playpausecmd } },
+  { 0,                            XF86XK_AudioNext,          spawn,          {.v = nextcmd } },
+  { 0,                            XF86XK_AudioPrev,          spawn,          {.v = prevcmd } },
+	{ 0,                            XF86XK_AudioLowerVolume,   spawn,	         {.v = downvol } },
+	{ 0,                            XF86XK_AudioMute,          spawn,	         {.v = mutevol } },
+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,	         {.v = upvol   } },
+	{ MODKEY,                       XK_bracketleft,            shiftview,      {.i = -1 } },
+	{ MODKEY,                       XK_bracketright,           shiftview,      {.i = +1 } },
+	{ MODKEY,                       XK_d,                      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_Return,                 spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_a,                      spawn,          {.v = alacritty } },
+  { MODKEY,			                  XK_o,                      spawn,		       SHCMD("emoji") },
+  { MODKEY,			                  XK_p,                      spawn,		       SHCMD("flameshot gui") },
+  { MODKEY|ShiftMask,			        XK_p,                      spawn,		       SHCMD("flameshot full -p ~/pics/screenshots") },
+	{ MODKEY,                       XK_b,                      togglebar,      {0} },
+	{ MODKEY,                       XK_j,                      focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,                      focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_i,                      incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_c,                      incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_h,                      setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_l,                      setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_semicolon,              zoom,           {0} },
+	{ MODKEY,                       XK_e,                      view,           {0} },
+	{ MODKEY,                       XK_q,                      killclient,     {0} },
+	{ MODKEY,                       XK_t,                      setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                       XK_f,                      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_m,                      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_space,                  setlayout,      {0} },
+	{ MODKEY|ShiftMask,             XK_space,                  togglefloating, {0} },
+	{ MODKEY,                       XK_0,                      view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_0,                      tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_comma,                  focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period,                 focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,                  tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period,                 tagmon,         {.i = +1 } },
+	TAGKEYS(                        XK_1,                                      0)
+	TAGKEYS(                        XK_2,                                      1)
+	TAGKEYS(                        XK_3,                                      2)
+	TAGKEYS(                        XK_4,                                      3)
+	TAGKEYS(                        XK_5,                                      4)
+	TAGKEYS(                        XK_6,                                      5)
+	TAGKEYS(                        XK_7,                                      6)
+	TAGKEYS(                        XK_8,                                      7)
+	TAGKEYS(                        XK_9,                                      8)
+	{ MODKEY|ShiftMask,             XK_q,                      quit,           {0} },
 };
 
 /* button definitions */
