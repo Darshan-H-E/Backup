@@ -1,0 +1,27 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+    "key": "f",
+    "command": "explorer.newFile",
+    "when": "explorerViewletFocus && !inputFocus"
+    },
+    {
+    "key": "d",
+    "command": "explorer.newFolder",
+    "when": "explorerViewletFocus && !inputFocus"
+    },
+    {
+    "key": "x",
+    "command": "deleteFile",
+    "when": "explorerViewletFocus && !inputFocus"
+    },
+    {
+    "key": "`",
+    "command": "renameFile",
+    "when": "explorerViewletVisible && filesExplorerFocus"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "-workbench.action.files.newUntitledFile"
+    }
+]

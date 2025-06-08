@@ -1,0 +1,84 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LGUG2Z/komorebi/v0.1.28/schema.json",
+  "app_specific_configuration_path": "$Env:USERPROFILE/applications.yaml",
+  "window_hiding_behaviour": "Cloak",
+  "cross_monitor_move_behaviour": "Insert",
+  "default_workspace_padding": 0,
+  "default_container_padding": 0,
+  "border": true,
+  "border_width": 8,
+  "border_offset": -1,
+  "mouse_follows_focus": false,
+  "border_colours": {
+    "single": "#42a5f5",
+    "stack": "#00a542",
+    "monocle": "#ff3399",
+    "unfocused": "#808080"
+  },
+  "stackbar": {
+    "height": 40,
+    "mode": "OnStack",
+    "tabs": {
+      "width": 300,
+      "focused_text": "#00a542",
+      "unfocused_text": "#b3b3b3",
+      "background": "#141414"
+    }
+  },
+  "monitors": [
+    {
+      "workspaces": [
+        {
+          "name": "I",
+          "layout": "VerticalStack",
+          "initial_workspace_rules": [
+            {
+              "kind": "Exe",
+              "id": "firefox.exe"
+            }
+          ]
+        },
+        {
+          "name": "II",
+          "layout": "VerticalStack",
+          "initial_workspace_rules": [
+            {
+              "kind": "Exe",
+              "id": "Code.exe"
+            }
+          ]
+        },
+        {
+          "name": "III",
+          "layout": "Grid"
+        },
+        {
+          "name": "IV",
+          "layout": "VerticalStack"
+        },
+        {
+          "name": "V",
+          "layout": "HorizontalStack"
+        },
+        {
+          "name": "VI",
+          "layout": "Grid"
+        },
+        {
+          "name": "VII"
+        }
+      ]
+    }
+  ],
+  "ignore_rules": [
+    {
+      "kind": "Exe",
+      "id": "explorer.exe"
+    },
+    {
+      "kind": "Exe",
+      "id": "qemu-system-x86_64.exe"
+    }
+  ]
+}
+

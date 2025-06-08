@@ -1,0 +1,120 @@
+{
+    "editor.fontSize": 21,
+    "editor.minimap.enabled": false,
+    "vim.easymotion": true,
+    "vim.incsearch": true,
+    "vim.useSystemClipboard": true,
+    "vim.useCtrlKeys": true,
+    "vim.hlsearch": true,
+    "vim.insertModeKeyBindings": [
+        {
+        "before": ["j", "k"],
+        "after": ["<Esc>"]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+        "before": ["<leader>", "w"],
+        "commands": ["workbench.action.files.save"]
+        },
+        {
+        "before": ["<leader>", "q"],
+        "commands": [":q"]
+        },
+        {
+        "before" : ["<leader>", "e"],
+        "commands" : ["workbench.view.explorer"]
+        },
+        {
+        "before" : ["<leader>", "r"],
+        "commands" : ["workbench.action.toggleSidebarVisibility"]
+        },
+        {
+        "before" : ["<leader>", "o"],
+        "commands" : ["revealInExplorer"]
+        },
+        {
+        "before" : ["<leader>", "p"],
+        "commands" : ["editor.action.formatDocument"]
+        },
+
+        // move b/w splits
+        // {
+        // "before": ["<C-h>"],
+        // "after": ["<C-w>", "h"]
+        // },
+        // {
+        // "before": ["<C-j>"],
+        // "after": ["<C-w>", "j"]
+        // },
+        // {
+        // "before": ["<C-k>"],
+        // "after": ["<C-w>", "k"]
+        // },
+        // {
+        // "before": ["<C-l>"],
+        // "after": ["<C-w>", "l"]
+        // },
+
+        {
+        "before": ["<leader>", "h"],
+        "commands": [":nohl"]
+        },
+        {
+        "before": ["<Leader>", "a"],
+        "commands": [":tabnew"]
+        },
+
+        // tab handling 
+        {
+        "before": ["<S-l>"],
+        "commands": [":tabnext"]
+        },
+        {
+        "before": ["<S-h>"],
+        "commands": [":tabprev"]
+        },
+        {
+        "before": ["<Leader>", "f"],
+        "commands": ["workbench.action.quickOpen"]
+        },
+        {
+        "before": ["<S-k>"],
+        "commands": ["editor.action.showHover"]
+        },
+        // {
+        // "before": ["<Leader>", "t", "o"],
+        // "commands": [":tabo"]
+        // }
+    ],
+    "vim.leader": "<space>",
+    "vim.handleKeys": {
+        "<C-a>": false,
+        "<C-f>": false
+    },
+    "editor.cursorBlinking": "solid",
+    "editor.fontFamily": "SFMono Nerd Font, Menlo, Monaco, 'Courier New', monospace",
+    "extensions.ignoreRecommendations": true,
+    "editor.wordWrap": "off",
+    "editor.lineNumbers": "on",
+
+    // go lang formatter
+    "[go]": {
+
+            "editor.formatOnSave": false,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": "never"
+            },
+        },
+    "go.formatTool": "gofmt",
+    "git.openRepositoryInParentFolders": "never",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "diffEditor.renderSideBySide": false,
+    "diffEditor.experimental.showMoves": true,
+    "vim.commandLineModeKeyBindings": [
+
+    ],
+    "liveServer.settings.donotShowInfoMsg": true,
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.colorTheme": "Default Light+",
+} 
