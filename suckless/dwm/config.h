@@ -71,6 +71,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_bluez, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *alacritty[]  = { "alacritty", NULL };
+static const char *firefox[]  = { "firefox", NULL };
 static const char *light_up[] = {"/home/d14/.local/bin/inc-brightness.sh", NULL};
 static const char *light_down[] = {"/home/d14/.local/bin/dec-brightness.sh", NULL};
 static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
@@ -100,6 +101,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_d,                      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_Return,                 spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_a,                      spawn,          {.v = alacritty } },
+	{ MODKEY,                       XK_s,                      spawn,          {.v = firefox } },
   { MODKEY,			                  XK_o,                      spawn,		       SHCMD("emoji") },
   { MODKEY,			                  XK_p,                      spawn,		       SHCMD("flameshot gui") },
   { MODKEY|ShiftMask,			        XK_p,                      spawn,		       SHCMD("flameshot full -p ~/pics/screenshots") },
