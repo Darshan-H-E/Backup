@@ -14,6 +14,40 @@ return {
   },
 
   {
+    "MattesGroeger/vim-bookmarks",
+    event = "VeryLazy",
+    init = function()
+      -- Optional: configure global variables
+      vim.g.bookmark_save_per_working_dir = 1
+      vim.g.bookmark_auto_save = 1
+      vim.g.bookmark_manage_per_buffer = 1
+      vim.g.bookmark_highlight_lines = 1
+    end,
+  },
+  -- autosession
+  {
+    "rmagatti/auto-session",
+    lazy = false,
+
+    ---enables autocomplete for opts
+    ---@module "auto-session"
+    ---@type AutoSession.Config
+    opts = {
+      suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+      -- log_level = 'debug',
+    },
+  },
+  -- Markdown preview
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function()
+      vim.fn["mkdp#util#install"]()
+    end,
+  },
+
+  {
     "nvim-pack/nvim-spectre",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
@@ -63,15 +97,16 @@ return {
     opts = {
       -- add any opts here
       -- for example
-      provider = "gemini",
-      gemini = {
-        endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
-        -- model = "gemini-2.5-pro-exp-03-25", -- your desired model (or use gpt-4o, etc.)
-        model = "gemini-2.5-flash-preview-04-17", -- your desired model (or use gpt-4o, etc.)
-        timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
-        temperature = 0,
-        max_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-        --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+      providers = {
+        gemini = {
+          endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
+          -- model = "gemini-2.5-pro-exp-03-25", -- your desired model (or use gpt-4o, etc.)
+          model = "gemini-2.5-flash-preview-04-17", -- your desired model (or use gpt-4o, etc.)
+          timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
+          temperature = 0,
+          max_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
+          --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+        },
       },
       windows = {
         -- position = "bottom",

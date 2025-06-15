@@ -11,6 +11,7 @@ nmcli device status
 journalctl -xeu NetworkManager
 
 ```
+
 ## Optional
 
 ```bash

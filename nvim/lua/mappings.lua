@@ -66,18 +66,18 @@ end, { desc = "Toggle spectre" })
 
 map("n", "<leader>sw", function()
   require("spectre").open_visual { select_word = true }
-end, { desc = "Search current word" })
+end, { desc = "spectre Search current word" })
 
 map("n", "<leader>sf", function()
   require("spectre").open_file_search()
-end, { desc = "Search in current file" })
+end, { desc = "spectre Search in current file" })
 
 -----------------------------------------------------------------------
 -- Run File
 -----------------------------------------------------------------------
 local function run_file(cmd)
   vim.cmd("w")
-  vim.cmd("split | terminal " .. cmd .. " " .. vim.fn.expand("%"))
+  vim.cmd("vsplit | terminal " .. cmd .. " " .. vim.fn.expand("%"))
 end
 
 map("n", "<leader>op", function()
@@ -120,3 +120,13 @@ end, { desc = "Toggle terminal split for dev server" })
 map("n", "<leader>hg", function()
   toggle_terminal("reflex -r '\\.go$' -- sh -c 'clear && go run .'")
 end, { desc = "Toggle Go project runner with auto rebuild" })
+
+map("n", "<Space>ss", ":call setqflist([{'filename': expand('%'), 'lnum': line('.'), 'text': getline('.')}], 'a')<CR>", { desc = "add to qflist" })
+
+-- Vim-bookmarks
+map("n", "mm", ":BookmarkToggle<CR>", { desc = "Toggle bookmark" })
+map("n", "mi", ":BookmarkAnnotate<CR>", { desc = "Annotate bookmark" })
+map("n", "mn", ":BookmarkNext<CR>", { desc = "Next bookmark" })
+map("n", "mp", ":BookmarkPrev<CR>", { desc = "Previous bookmark" })
+map("n", "mc", ":BookmarkClear<CR>", { desc = "Clear bookmarks" })
+map("n", "ma", ":BookmarkShowAll<CR>", { desc = "Show all bookmarks" })

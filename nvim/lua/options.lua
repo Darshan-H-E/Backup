@@ -23,3 +23,15 @@ vim.g.completion_chain_complete_list = {
   },
 }
 
+require('telescope').setup({
+  defaults = {
+    layout_strategy = 'vertical',
+    layout_config = {
+      prompt_position = 'top',
+      preview_cutoff = 0,
+      height = 0.95,
+      preview_height = 0.6,
+    },
+    sorting_strategy = 'ascending',
+  },
+})
