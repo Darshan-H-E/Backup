@@ -1,6 +1,6 @@
 ## Deps 
 
-base-devel git python meson ninja glib2 pixman gtk3 libsdl sdl2 libpulse libslirp usbredir spice gtk-vnc libvirt alsa-lib jack libxkbcommon libepoxy
+base-devel git python meson ninja glib2 pixman gtk3 sdl sdl2 libpulse libslirp usbredir spice gtk-vnc libvirt alsa-lib jack libxkbcommon libepoxy
 
 ndctl libcbor capstone spice spice-protocol spice-vdagent sdl2
 virglrenderer libva vde2
@@ -11,8 +11,7 @@ seabios
 
 make distclean  # clean previous build completely
 
-./configure --prefix=$HOME/qemu-install --target-list=x86_64-softmmu --enable-spice --enable-slirp --enable-virtio --enable-vnc --enable-gtk --enable-sdl --enable-kvm
-
+CFLAGS='-Wno-error=redundant-decls' ./configure --prefix=$HOME/qemu-install --target-list=x86_64-softmmu --enable-spice --enable-slirp --enable-vnc --enable-gtk --enable-sdl --enable-kvm
 
 make -j$(nproc)
 make install
