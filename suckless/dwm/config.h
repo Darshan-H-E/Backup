@@ -105,6 +105,7 @@ static Key keys[] = {
   { MODKEY,			                  XK_o,                      spawn,		       SHCMD("emoji") },
   { MODKEY,			                  XK_p,                      spawn,		       SHCMD("flameshot gui") },
   { MODKEY|ShiftMask,			        XK_p,                      spawn,		       SHCMD("flameshot full -p ~/pics/screenshots") },
+  { MODKEY|ShiftMask,			        XK_grave,                  spawn,		       SHCMD("flameshot full -p ~/pics/screenshots") },
 	{ MODKEY,                       XK_b,                      togglebar,      {0} },
 	{ MODKEY,                       XK_j,                      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,                      focusstack,     {.i = -1 } },
