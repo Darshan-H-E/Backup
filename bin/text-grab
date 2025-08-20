@@ -1,0 +1,11 @@
+#!/bin/bash
+# Take screenshot
+scrot -s -o /tmp/ocr.png
+
+# Run OCR
+tesseract /tmp/ocr.png /tmp/ocr -l eng
+
+# Copy to clipboard
+xclip -selection clipboard < /tmp/ocr.txt
+
+rm /tmp/ocr.png
