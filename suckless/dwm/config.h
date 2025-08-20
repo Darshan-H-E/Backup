@@ -3,7 +3,7 @@
 #include <X11/XF86keysym.h>
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 0;        /* 0 means bottom bar */
@@ -74,6 +74,7 @@ static const char *alacritty[]  = { "alacritty", NULL };
 static const char *firefox[]  = { "firefox", NULL };
 static const char *light_up[] = {"/home/d14/.local/bin/inc-brightness.sh", NULL};
 static const char *light_down[] = {"/home/d14/.local/bin/dec-brightness.sh", NULL};
+static const char *text_grab[] = {"/home/d14/.local/bin/text-grab", NULL};
 static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
 static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
 static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
@@ -95,7 +96,8 @@ static Key keys[] = {
   { 0,                            XF86XK_AudioPrev,          spawn,               {.v = prevcmd } },
 	{ 0,                            XF86XK_AudioLowerVolume,   spawn,	              {.v = downvol } },
 	{ 0,                            XF86XK_AudioMute,          spawn,	              {.v = mutevol } },
-	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,	              {.v = upvol   } },
+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,	              {.v = upvol } },
+	{ 0,                            XK_w,                      spawn,	              {.v = text_grab } },
 	{ MODKEY,                       XK_bracketleft,            shiftview,           {.i = -1 } },
 	{ MODKEY,                       XK_bracketright,           shiftview,           {.i = +1 } },
 	{ MODKEY,                       XK_d,                      spawn,               {.v = dmenucmd } },
