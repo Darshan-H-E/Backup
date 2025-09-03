@@ -10,6 +10,7 @@ xset r rate 200 30
 
 picom -f & 
 nitrogen --restore &
+lxpolkit &
 
 # Start polkit-gnome agent
 # eval $(/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &)
@@ -18,15 +19,19 @@ nitrogen --restore &
 while true; do
     TIME="$(date '+%d/%m %a %H:%M')"
     SSID="$(iwgetid -r)"
-    VOLUME="$(pamixer --get-volume)"  # Get the current volume level
+    VOLUME="$(pamixer --get-volume)"
+    SONG="$(playerctl metadata --format '{{artist}} • {{title}}' 2>/dev/null)"
 
-    # If connected to Wi-Fi, show SSID, otherwise show "No Wi-Fi"
-    if [ -n "$SSID" ]; then
-        xsetroot -name "$SSID | Vol: $VOLUME | $TIME"
-    else
-        xsetroot -name "No Wi-Fi | Vol: $VOLUME | $TIME"
+    if [ -z "$SONG" ]; then
+        SONG="Music"
     fi
-    sleep 60
+
+    if [ -z "$SSID" ]; then
+        SSID="$(No Wi-Fi)"
+    fi
+
+    xsetroot -name "$SONG | $SSID | Vol: $VOLUME | $TIME"
+    sleep 1
 done &
 
 dwm
