@@ -8,30 +8,32 @@ xset -dpms
 xset s noblank
 xset r rate 200 30
 
-picom -f & 
+picom -f &
 nitrogen --restore &
 lxpolkit &
 
 # Start polkit-gnome agent
 # eval $(/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &)
 
-# Update xsetroot with date, Wi-Fi SSID, and volume every minute
-while true; do
+(
+  while pgrep -x dwm >/dev/null; do
     TIME="$(date '+%d/%m %a %H:%M')"
     SSID="$(iwgetid -r)"
     VOLUME="$(pamixer --get-volume)"
-    SONG="$(playerctl metadata --format '{{artist}} • {{title}}' 2>/dev/null)"
+    PLAYER_URL="$(playerctl metadata xesam:url 2>/dev/null || true)"
 
-    if [ -z "$SONG" ]; then
-        SONG="Music"
+    if echo "$PLAYER_URL" | grep -qF "music.youtube.com" ||
+      echo "$PLAYER_URL" | grep -qF "open.spotify.com"; then
+      SONG="$(playerctl metadata --format '{{artist}} • {{title}}' 2>/dev/null || true)"
+      [ -z "$SONG" ] && SONG="Music"
+    else
+      SONG="Music"
     fi
 
-    if [ -z "$SSID" ]; then
-        SSID="$(No Wi-Fi)"
-    fi
-
-    xsetroot -name "$SONG | $SSID | Vol: $VOLUME | $TIME"
+    [ -z "$SSID" ] && SSID=""
+    xprop -root -f WM_NAME 8s -set WM_NAME "$SONG | $SSID | Vol: $VOLUME | $TIME"
     sleep 1
-done &
+  done
+) &
 
 dwm
