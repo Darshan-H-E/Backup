@@ -1,0 +1,48 @@
+set -o vi
+bind '"jk":vi-movement-mode'
+bind '"\C-l":clear-screen'
+
+[[ $- != *i* ]] && return
+alias ls='ls --color=auto'
+
+PS1="\[\033[32m\]▶ \[\033[37m\]\[\033[34m\]\W \[\033[0m\]"
+
+# bash history unlimited
+HISTSIZE=
+HISTFILESIZE=
+
+alias no='newsboat'
+alias nn='nvim'
+alias rn='ranger'
+alias gst='git status'
+alias lg='lazygit'
+alias lad='lazydocker'
+alias cat="bat"
+alias f='fortune'
+alias fb='fortune | boxes -d parchment | lolcat'
+alias fc='fortune | cowsay | lolcat'
+
+alias pg='ping -c1 www.google.com'
+alias so='source ~/.bashrc'
+alias up='sudo pacman -Syu'
+alias ssd='systemctl start docker'
+
+alias vmc='vm -device usb-ehci,id=ehci -device usb-host,hostbus=3,hostaddr=3'
+
+# source venv
+alias va='source ./venv/bin/activate'
+alias iv='virtualenv3 venv'
+alias cod='conda deactivate'
+
+# Exports
+export EDITOR=nvim
+export BROWSER=firefox
+export COLORTERM=truecolor
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+eval "$(fnm env --use-on-cd --shell bash)"
+
+[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env" # g shell setup
+
+eval "$(zoxide init bash)"
