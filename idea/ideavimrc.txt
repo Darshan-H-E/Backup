@@ -1,0 +1,87 @@
+" You can find a list of commands here: https://jb.gg/h38q75
+" Find more examples here: https://jb.gg/share-ideavimrc
+"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+" --- Enable IdeaVim plugins https://jb.gg/ideavim-plugins
+
+" Highlight copied text
+Plug 'machakann/vim-highlightedyank'
+Plug 'tpope/vim-commentary'
+
+let mapleader=" "
+
+""" Plugins  --------------------------------
+set surround
+set nocursorline
+set ignorecase
+set multiple-cursors
+set argtextobj
+set textobj-entire
+set ReplaceWithRegister
+set exchange
+set NERDTree
+" Trying the new syntax
+Plug 'machakann/vim-highlightedyank'
+
+""" Plugin settings -------------------------
+let g:argtextobj_pairs="[:],(:),<:>"
+
+" <C-n> seems to me as a better solution than <M-n>,
+" but we should finally support vim-visual-multi because vim-multiple-cursors is deprecated now
+map <C-n> <Plug>NextWholeOccurrence
+
+""" Common settings -------------------------
+set showmode
+set so=5
+set incsearch
+set nu
+
+""" Idea specific settings ------------------
+set ideajoin
+set ideastatusicon=gray
+set clipboard+=unnamed
+
+""" My Mappings -----------------------------
+inoremap jk <ESC>
+map <leader>d <Action>(Debug)
+map <leader>r <Action>(RenameElement)
+map <leader>c <Action>(Stop)
+map <leader>z <Action>(ToggleDistractionFreeMode)
+
+""" map <leader>s <Action>(SelectInProjectView)
+map <leader>a <Action>(Annotate)
+map <leader>h <Action>(HideActiveWindow)
+map <S-Space> <Action>(GotoNextError)
+
+map gi <Action>(GotoImplementation)
+
+" Reformat the current line only
+map <leader>l V<Action>(ReformatCode)
+
+"" Map \r to the Reformat Code action
+"map \r <Action>(ReformatCode)
+
+map <leader>b <Action>(ToggleLineBreakpoint)
+map <leader>o <Action>(FileStructurePopup)
+
+map <leader>p <Action>(JumpToLastWindow)
+map <leader>i <Action>(HideActiveWindow)
+
+map <leader>/ <Action>(CommentByLineComment)
+vmap <leader>/ <Action>(CommentByLineComment)<Esc>
+
+" Tab navigation
+map <S-l> <Action>(NextTab)
+map <S-h> <Action>(PreviousTab)
+
+" Close buffer
+map <leader>; <Action>(CloseContent)
+
+" Pane navigation
+map <C-h> <Action>(PrevSplitter)
+map <C-l> <Action>(NextSplitter)
+map <C-j> <Action>(MoveFocusDown)
+map <C-k> <Action>(MoveFocusUp)
+
+" NERDTree-like file explorer
+map <leader>e <Action>(ActivateProjectToolWindow)
+map <leader>n <Action>(SelectInProjectView)
