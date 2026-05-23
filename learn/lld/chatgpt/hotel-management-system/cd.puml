@@ -1,0 +1,406 @@
+@startuml
+' Hotel Management System - Class Diagram (PlantUML)
+' Expanded class, enum, interface and package definitions (no one-line representations)
+
+package "Domain" {
+  class Hotel {
+    - hotelId: UUID
+    - name: String
+    - address: Address
+    - phone: String
+    - timezone: String
+    - rooms: Map<UUID, Room>
+    - policies: HotelPolicy
+
+    + addRoom(room: Room): void
+    + removeRoom(roomId: UUID): void
+    + getRoom(roomId: UUID): Room
+    + findAvailableRooms(criteria: RoomSearchCriteria, from: LocalDateTime, to: LocalDateTime): List<Room>
+    + updatePolicy(p: HotelPolicy): void
+  }
+
+  class Room {
+    - roomId: UUID
+    - number: String
+    - type: RoomType
+    - capacity: int
+    - status: RoomStatus
+    - ratePlan: RatePlan
+    - amenities: Set<Amenity>
+    - floor: int
+    - currentBookingId: UUID
+
+    + isAvailable(from: LocalDateTime, to: LocalDateTime): boolean
+    + reserve(bookingId: UUID): void
+    + checkin(bookingId: UUID): void
+    + checkout(): void
+    + markCleaning(): void
+    + markMaintenance(reason: String): void
+    + updateRate(ratePlan: RatePlan): void
+  }
+
+  class Guest {
+    - guestId: UUID
+    - firstName: String
+    - lastName: String
+    - email: String
+    - phone: String
+    - address: Address
+    - idDocuments: List<IDDocument>
+    - loyaltyId: String
+    - preferences: Map<String,String>
+
+    + updateContact(email: String, phone: String): void
+    + addIdDocument(doc: IDDocument): void
+    + linkLoyalty(loyaltyId: String): void
+  }
+
+  class Booking {
+    - bookingId: UUID
+    - guestId: UUID
+    - roomIds: List<UUID>
+    - status: BookingStatus
+    - checkin: LocalDateTime
+    - checkout: LocalDateTime
+    - createdAt: Instant
+    - updatedAt: Instant
+    - source: BookingSource
+    - paymentId: UUID
+    - totalAmount: Money
+    - taxes: Money
+    - discounts: List<Discount>
+    - notes: String
+    - policiesApplied: List<Policy>
+
+    + confirm(): void
+    + cancel(reason: String): void
+    + modify(changes: Map): void
+    + checkIn(actualTime: LocalDateTime): void
+    + checkOut(actualTime: LocalDateTime): Invoice
+    + calculateTotal(): Money
+    + applyDiscount(d: Discount): void
+    + addNote(n: String): void
+  }
+
+  class RatePlan {
+    - planId: UUID
+    - name: String
+    - baseRate: Money
+  }
+
+  class HotelPolicy {
+    - policyId: UUID
+    - rules: Map<String,String>
+  }
+
+  enum RoomType {
+    SINGLE
+    DOUBLE
+    SUITE
+    DELUXE
+  }
+
+  enum RoomStatus {
+    AVAILABLE
+    OCCUPIED
+    CLEANING
+    MAINTENANCE
+    RESERVED
+  }
+
+}
+
+package "Services" {
+  class ReservationService {
+    - roomRepo: RoomRepository
+    - bookingRepo: BookingRepository
+    - availabilityStrategy: RoomAllocationStrategy
+
+    + createBooking(guest: Guest, request: BookingRequest): Booking
+    + modifyBooking(bookingId: UUID, changes: Map): Booking
+    + cancelBooking(bookingId: UUID, reason: String): void
+    + searchAvailability(criteria: RoomSearchCriteria, from: LocalDateTime, to: LocalDateTime): List<Room>
+    + autoAllocate(bookingId: UUID): void
+  }
+
+  class PaymentService {
+    - gateways: Map<String, PaymentGateway>
+    - paymentRepo: PaymentRepository
+
+    + processPayment(bookingId: UUID, paymentDetails: PaymentDetails): Payment
+    + verifyPayment(paymentId: UUID): PaymentStatus
+    + refundPayment(paymentId: UUID, amount: Money): PaymentResult
+  }
+
+  class BillingService {
+    - invoiceRepo: InvoiceRepository
+
+    + generateInvoice(bookingId: UUID): Invoice
+    + applyPayment(invoiceId: UUID, paymentId: UUID): void
+    + issueInvoice(invoiceId: UUID): void
+    + getInvoice(invoiceId: UUID): Invoice
+    + adjustInvoice(invoiceId: UUID, adjustments: Map): Invoice
+  }
+
+  class HousekeepingService {
+    - housekeepingRepo: HousekeepingRepository
+
+    + createTask(roomId: UUID, notes: String): HousekeepingTask
+    + assign(taskId: UUID, staffId: UUID): void
+    + updateStatus(taskId: UUID, status: TaskStatus): void
+    + listPendingByStaff(staffId: UUID): List<HousekeepingTask>
+    + autoCreateOnCheckout(bookingId: UUID): void
+  }
+
+  class InventoryService {
+    - inventoryRepo: InventoryRepository
+
+    + consume(itemId: UUID, qty: int): void
+    + replenish(itemId: UUID, qty: int): void
+    + checkLowStock(): List<InventoryItem>
+    + adjust(itemId: UUID, qty: int, reason: String): void
+  }
+
+  class NotificationService {
+    - channels: Map<String, NotificationChannel>
+
+    + sendEmail(to: String, subject: String, body: String): NotificationResult
+    + sendSMS(to: String, text: String): NotificationResult
+    + enqueueNotification(event: DomainEvent): void
+    + subscribe(eventType: String, handler: Function): void
+  }
+
+  class ReportingService {
+    + occupancyReport(from: LocalDate, to: LocalDate): OccupancyReport
+    + revenueReport(from: LocalDate, to: LocalDate): RevenueReport
+    + dailyOpsReport(date: LocalDate): DailyOpsReport
+    + customQuery(params: Map): ReportResult
+  }
+}
+
+package "Auth & Staff" {
+  class StaffUser {
+    - userId: UUID
+    - username: String
+    - hashedPassword: String
+    - roles: Set<Role>
+    - name: String
+    - contact: String
+    - lastLogin: Instant
+    - permissions: Set<Permission>
+
+    + updateRoles(roles: Set<Role>): void
+  }
+
+  class AuthService {
+    + authenticate(username: String, password: String): AuthToken
+    + authorize(token: AuthToken, permission: Permission): boolean
+    + createUser(u: StaffUser): StaffUser
+    + updateRoles(userId: UUID, roles: Set<Role>): void
+  }
+
+  enum Role {
+    ADMIN
+    RECEPTION
+    HOUSEKEEPING
+    MANAGER
+    ACCOUNTING
+  }
+
+}
+
+package "Housekeeping & Inventory" {
+  class HousekeepingTask {
+    - taskId: UUID
+    - roomId: UUID
+    - assignedTo: UUID
+    - status: TaskStatus
+    - priority: Priority
+    - createdAt: Instant
+    - dueBy: Instant
+    - notes: String
+
+    + markInProgress(): void
+    + markDone(): void
+    + assignTo(staffId: UUID): void
+  }
+
+  enum TaskStatus {
+    PENDING
+    IN_PROGRESS
+    DONE
+  }
+
+  enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+  }
+
+  class InventoryItem {
+    - itemId: UUID
+    - name: String
+    - sku: String
+    - quantityOnHand: int
+    - reorderLevel: int
+    - location: String
+    - unitCost: Money
+
+    + consume(qty: int): void
+    + replenish(qty: int): void
+    + adjust(qty: int, reason: String): void
+  }
+}
+
+package "Billing & Payments" {
+  class Payment {
+    - paymentId: UUID
+    - bookingId: UUID
+    - amount: Money
+    - currency: Currency
+    - method: PaymentMethod
+    - status: PaymentStatus
+    - gatewayResponse: Map<String,String>
+    - createdAt: Instant
+
+    + authorize(): PaymentResult
+    + capture(): PaymentResult
+    + refund(amount: Money): PaymentResult
+  }
+
+  enum PaymentStatus {
+    INIT
+    AUTHORIZED
+    CAPTURED
+    REFUNDED
+    FAILED
+  }
+
+  class Invoice {
+    - invoiceId: UUID
+    - bookingId: UUID
+    - items: List<InvoiceItem>
+    - subtotal: Money
+    - tax: Money
+    - total: Money
+    - status: InvoiceStatus
+    - issuedAt: Instant
+    - paidAt: Instant
+
+    + addItem(item: InvoiceItem): void
+    + calculateTotals(): void
+    + markPaid(at: Instant): void
+  }
+
+  enum InvoiceStatus {
+    DRAFT
+    ISSUED
+    PAID
+    CANCELLED
+  }
+}
+
+package "Infrastructure & Patterns" {
+  interface RoomRepository {
+    + findById(id: UUID): Room
+    + findAvailable(criteria: RoomSearchCriteria, from: LocalDateTime, to: LocalDateTime): List<Room>
+    + save(room: Room): void
+    + delete(id: UUID): void
+  }
+
+  interface BookingRepository {
+    + save(booking: Booking): void
+    + findById(id: UUID): Booking
+    + findByGuest(guestId: UUID): List<Booking>
+    + search(filter: Map): List<Booking>
+  }
+
+  interface PaymentRepository {
+    + save(p: Payment): void
+    + findById(id: UUID): Payment
+  }
+
+  interface InvoiceRepository {
+    + save(i: Invoice): void
+    + findById(id: UUID): Invoice
+  }
+
+  interface UserRepository {
+    + save(u: StaffUser): void
+    + findById(id: UUID): StaffUser
+  }
+
+  interface InventoryRepository {
+    + save(i: InventoryItem): void
+    + findById(id: UUID): InventoryItem
+  }
+
+  interface HousekeepingRepository {
+    + save(t: HousekeepingTask): void
+    + findById(id: UUID): HousekeepingTask
+  }
+
+  interface RoomAllocationStrategy {
+    + allocateRooms(request: BookingRequest, availableRooms: List<Room>): List<Room>
+  }
+
+  class EventBus {
+    + publish(event: DomainEvent): void
+    + subscribe(eventType: String, handler: Function): void
+    + dispatchToHandlers(): void
+  }
+
+  class AuditLog {
+    - logId: UUID
+    - entityId: UUID
+    - entityType: String
+    - action: String
+    - actorId: UUID
+    - timestamp: Instant
+    - changes: Map
+
+    + record(entity: Object, action: String, actor: UUID, delta: Map): void
+    + query(filters: Map): List<AuditLog>
+  }
+
+  class Scheduler {
+    + schedule(taskName: String, cronExpr: String, payload: Map): JobId
+    + runDueJobs(): void
+    + cancel(jobId: JobId): void
+  }
+}
+
+' relationships
+Hotel "1" o-- "*" Room
+Booking "1" o-- "*" Room : reserves
+Booking "1" *-- "1" Guest
+Booking "1" --> "0..1" Payment
+Booking "1" --> "0..1" Invoice
+ReservationService ..> RoomRepository
+ReservationService ..> BookingRepository
+ReservationService --> Room : uses
+PaymentService ..> PaymentRepository
+BillingService ..> InvoiceRepository
+HousekeepingService ..> HousekeepingRepository
+InventoryService ..> InventoryRepository
+NotificationService ..> EventBus
+ReportingService ..> BookingRepository
+AuthService ..> UserRepository
+EventBus ..> NotificationService
+EventBus ..> HousekeepingService
+EventBus ..> InventoryService
+EventBus ..> AuditLog
+RoomRepository <|.. RoomRepositoryImpl
+BookingRepository <|.. BookingRepositoryImpl
+
+note right of Booking
+BookingStatus: PENDING, CONFIRMED, CHECKED_IN,
+CHECKED_OUT, CANCELLED, NO_SHOW
+end note
+
+note left of Room
+RoomStatus: AVAILABLE, OCCUPIED, CLEANING,
+MAINTENANCE, RESERVED
+end note
+
+@enduml

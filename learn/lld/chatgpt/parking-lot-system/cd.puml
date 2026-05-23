@@ -1,0 +1,326 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "api" {
+  class ParkingController {
+    - ParkingService parkingService
+    + parkVehicle(request: ParkRequestDTO): ParkResponseDTO
+    + exitVehicle(request: ExitRequestDTO): ExitResponseDTO
+    + getAvailableSlots(req: QueryRequestDTO): List<SlotDTO>
+    + findVehicleByReg(reg: String): Optional<SlotDTO>
+    + health(): HealthStatusDTO
+  }
+}
+
+package "service" {
+  class ParkingService {
+    - SlotAllocator slotAllocator
+    - TicketRepository ticketRepo
+    - SlotRepository slotRepo
+    - PricingService pricingService
+    - EventPublisher eventPublisher
+    + parkVehicle(vehicle: Vehicle, gate: EntryGate): Ticket
+    + exitVehicle(ticketId: String, gate: ExitGate): ExitResult
+    + queryAvailableSlots(type: VehicleType, floor: Integer): List<Slot>
+    + searchVehicleByReg(reg: String): Optional<Slot>
+  }
+
+  class ReservationService {
+    - ReservationRepository reservationRepo
+    - SlotAllocator allocator
+    + createReservation(type: VehicleType, start: LocalDateTime, duration: Duration, userId: String): Reservation
+    + cancelReservation(id: String): boolean
+    + claimReservation(id: String, vehicleReg: String): Optional<Slot>
+  }
+
+  class PricingService {
+    - strategies: Map<VehicleType, PricingStrategy>
+    + computeCharge(ticket: Ticket): BigDecimal
+    + registerStrategy(type: VehicleType, strategy: PricingStrategy)
+  }
+
+  class NotificationService {
+    + notifyUser(userId: String, message: Notification)
+    + notifyOps(message: Notification)
+  }
+
+  class MetricsService {
+    + recordParkLatency(ms: long)
+    + incrementCounter(name: String)
+    + getMetrics(): ParkingMetrics
+  }
+}
+
+package "domain" {
+  class ParkingLot {
+    - id: String
+    - name: String
+    - totalFloors: int
+    - floors: Map<Integer, Floor>
+    - config: ParkingLotConfig
+    + getInstance(id: String, cfg: ParkingLotConfig): ParkingLot
+    + getFloor(n: int): Floor
+    + listFloors(): List<Floor>
+    + addFloor(f: Floor)
+    + removeFloor(n: int)
+    + getStatus(): ParkingLotStatus
+  }
+
+  class Floor {
+    - floorNumber: int
+    - slots: Map<String, Slot>
+    - availableCount: Map<VehicleType, AtomicInteger>
+    - lock: ReentrantReadWriteLock
+    + findNearestAvailableSlot(type: VehicleType): Optional<Slot>
+    + hasAvailableSlot(type: VehicleType): boolean
+    + addSlot(s: Slot)
+    + removeSlot(id: String)
+    + getAvailableCounts(): Map<VehicleType, Integer>
+  }
+
+  class Slot {
+    - id: String
+    - allowedType: VehicleType
+    - size: SlotSize
+    - status: SlotStatus
+    - occupiedBy: Ticket
+    - createdAt: long
+    - updatedAt: long
+    + isAvailable(): boolean
+    + occupy(ticket: Ticket)
+    + vacate()
+    + reserve(reservationId: String, ttl: Duration)
+    + markOutOfService(reason: String)
+  }
+
+  class Vehicle {
+    - registrationNumber: String
+    - type: VehicleType
+    - color: String
+    - ownerId: String
+    + matchesRegistration(reg: String): boolean
+    + matchesColor(color: String): boolean
+  }
+
+  class Ticket {
+    - ticketId: String
+    - parkingLotId: String
+    - slotId: String
+    - vehicleRegistration: String
+    - vehicleType: VehicleType
+    - entryTimestamp: long
+    - exitTimestamp: Long
+    - status: TicketStatus
+    - amountCharged: BigDecimal
+    + markExit(exitTs: long, amount: BigDecimal)
+    + getDurationMillis(): long
+    + computeAmount(strategy: PricingStrategy): BigDecimal
+  }
+
+  class Reservation {
+    - id: String
+    - slotId: String
+    - startTs: long
+    - endTs: long
+    - userId: String
+    - status: ReservationStatus
+  }
+
+  enum VehicleType { 
+    CAR
+    BIKE
+    TRUCK
+  }
+  enum SlotStatus {
+    AVAILABLE
+    OCCUPIED
+    RESERVED
+    OUT_OF_SERVICE
+  }
+
+  enum TicketStatus { 
+    ACTIVE 
+    CLOSED 
+    CANCELLED
+  }
+  enum ReservationStatus { 
+    ACTIVE
+    CLAIMED
+    CANCELLED
+    EXPIRED
+  }
+}
+
+package "repository" {
+  interface TicketRepository {
+    + save(ticket: Ticket): Ticket
+    + findById(id: String): Optional<Ticket>
+    + findActiveByVehicleReg(reg: String): Optional<Ticket>
+    + findActiveByFloor(floor: int): List<Ticket>
+    + update(ticket: Ticket)
+    + listActive(): List<Ticket>
+  }
+
+  interface SlotRepository {
+    + findById(id: String): Optional<Slot>
+    + findAvailableByType(type: VehicleType, limit: int): List<Slot>
+    + updateSlotStatus(id: String, status: SlotStatus)
+    + findSlotsByFloor(floor: int): List<Slot>
+    + findOccupiedSlots(): List<Slot>
+  }
+
+  interface ReservationRepository {
+    + save(res: Reservation): Reservation
+    + findById(id: String): Optional<Reservation>
+    + delete(id: String)
+  }
+}
+
+package "infra" {
+  interface EventPublisher {
+    + publish(e: Event)
+    + registerListener(type: EventType, l: EventListener)
+  }
+
+  interface PaymentService {
+    + charge(details: PaymentDetails, amount: BigDecimal): PaymentResult
+    + refund(paymentId: String): RefundResult
+  }
+
+  class RedisIndex {
+    + addAvailableSlot(floor: int, type: VehicleType, slotId: String, score: double)
+    + removeAvailableSlot(floor: int, type: VehicleType, slotId: String)
+    + getNearestAvailable(floor: int, type: VehicleType, limit: int): List<String>
+  }
+
+  class DB {
+    + beginTransaction()
+    + commit()
+    + rollback()
+  }
+}
+
+package "factory" {
+  class SlotFactory {
+    + createSlot(floorPrefix: String, number: int, size: SlotSize, type: VehicleType): Slot
+  }
+}
+
+package "alloc" {
+  interface SlotAllocator {
+    + allocate(type: VehicleType, gate: EntryGate): Optional<Slot>
+    + free(slot: Slot)
+    + reserveSlot(slotId: String, ttl: Duration)
+  }
+
+  class GreedySlotAllocator {
+    - slotRepo: SlotRepository
+    - redisIndex: RedisIndex
+    + allocate(type: VehicleType, gate: EntryGate): Optional<Slot>
+    + free(slot: Slot)
+    + reserveSlot(slotId: String, ttl: Duration)
+  }
+
+  class LoadBalancedAllocator {
+    - slotRepo: SlotRepository
+    - redisIndex: RedisIndex
+    + allocate(type: VehicleType, gate: EntryGate): Optional<Slot>
+    + free(slot: Slot)
+    + reserveSlot(slotId: String, ttl: Duration)
+  }
+}
+
+package "pricing" {
+  interface PricingStrategy {
+    + calculate(ticket: Ticket, durationMillis: long): BigDecimal
+  }
+
+  class FlatRatePricing {
+    + calculate(ticket: Ticket, durationMillis: long): BigDecimal
+  }
+
+  class HourlyPricing {
+    + calculate(ticket: Ticket, durationMillis: long): BigDecimal
+  }
+}
+
+package "gates" {
+  class EntryGate {
+    - gateId: String
+    - camera: Camera
+    - scanner: Scanner
+    + scanAndAuthorize(data: InputData): EntryScanResult
+    + open()
+    + close()
+  }
+
+  class ExitGate {
+    - gateId: String
+    - scanner: Scanner
+    + processExit(data: InputData): ExitResult
+    + open()
+    + close()
+  }
+}
+
+package "dto" {
+  class ParkRequestDTO {
+    - registration: String
+    - type: VehicleType
+    - color: String
+    - preferredFloor: Integer
+  }
+
+  class ParkResponseDTO {
+    - ticketId: String
+    - slotId: String
+    - entryTime: LocalDateTime
+  }
+
+  class ExitRequestDTO {
+    - ticketId: String
+  }
+
+  class ExitResponseDTO {
+    - amount: BigDecimal
+    - duration: long
+    - receiptId: String
+  }
+}
+
+package "exceptions" {
+  class NoAvailableSlotException {
+    - message: String
+  }
+  class InvalidTicketException {
+    - message: String
+  }
+  class SlotAlreadyOccupiedException {
+    - message: String
+  }
+  class PaymentFailedException {
+    - message: String
+  }
+}
+
+' relationships
+ParkingController --> ParkingService
+ParkingService --> SlotAllocator
+ParkingService --> TicketRepository
+ParkingService --> SlotRepository
+ParkingService --> PricingService
+ParkingService --> EventPublisher
+ReservationService --> SlotAllocator
+PricingService --> PricingStrategy
+GreedySlotAllocator ..|> SlotAllocator
+LoadBalancedAllocator ..|> SlotAllocator
+FlatRatePricing ..|> PricingStrategy
+HourlyPricing ..|> PricingStrategy
+TicketRepository <.. DB
+SlotRepository <.. DB
+RedisIndex <-- GreedySlotAllocator
+RedisIndex <-- LoadBalancedAllocator
+ParkingController ..> dto.ParkRequestDTO
+ParkingController ..> dto.ParkResponseDTO
+
+@enduml
